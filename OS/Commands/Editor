@@ -22,5 +22,3 @@ if click == "button1" then
 else
     fs.delete("OS/temp/"..prog)
 end
-
-test = 1
