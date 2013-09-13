@@ -1,0 +1,278 @@
+--rednet.open("bottom")
+os.loadAPI("OS/API/file")
+os.loadAPI("OS/API/draw")
+
+--GLOBAL VARIABLES--
+
+maxX, maxY = term.getSize()
+screen = "Desktop"
+menu = 1
+menuI = 1
+menuII = 1
+minCol = 2
+maxCol = 3
+line = 4
+state = 5
+startMin = 1
+startMax = 5
+startY = maxY
+start = false
+subMenu = false
+
+--COLOURS!!! THAT'S RIGHT A FUCKING U IN COLOURS!!--
+
+white = 1
+orange = 2
+magenta = 4
+lightBlue = 8
+yellow = 16
+lime = 32
+pink = 64
+grey = 128
+lightGrey = 256
+cyan = 512
+purple = 1024
+blue = 2048
+brown = 4096
+green = 8192
+red = 16384
+black = 32768
+playerColor = lightBlue
+term.setTextColor(white)
+
+--PERIPHERAL FUNCTIONS--
+
+function check()
+    perData = peripheral.getNames()
+    for i = 1, #perData do
+        if peripheral.getType(perData[i]) == "modem" then
+            m = peripheral.wrap(perData[i])
+            if m.isWireless() then
+                wifiSide = perData[i]
+            else
+            end
+            print("Modem installed on "..perData[i])
+        elseif peripheral.getType(perData[i]) == "printer" then
+            p = peripheral.wrap(perData[i])
+            print("Printer installed on "..perData[i])
+        end
+    end
+end
+
+--TABLE FUNCTIONS--
+
+function menuTable()
+    mTable = {}
+    menuWidth = 1
+    data = fs.open("OS/menus/menuData", "r")
+    maxEntries = tonumber(data.readLine())
+    for i = 1, maxEntries do
+        mTable[i] = {}
+        mTable[i][menu] = tostring(data.readLine())
+        mTable[i][minCol] = 1
+        mTable[i][maxCol] = string.len(mTable[i][menu]) + 1
+        mTable[i][line] = (maxY - 1) - (i - 1)
+        mTable[i][state] = false
+        newWidth = mTable[i][maxCol]
+        if newWidth > menuWidth then
+            menuWidth = newWidth
+        end
+    end
+    for i = 1, maxEntries do
+        mTable[i][maxCol] = menuWidth
+    end
+    data.close()
+end
+
+function loadTable(fileName)
+    subMenuWidth = 0
+    newMax = 0
+    subMenuTable = nil
+    subMenuTable = {}
+    data = fs.open("OS/menus/"..fileName, "r")
+    newMax = tonumber(data.readLine())
+    for i = 1, newMax do
+        subMenuTable[i] = {}
+        subMenuTable[i][menu] = tostring(data.readLine())
+        subMenuTable[i][minCol] = menuWidth + 1
+        subMenuTable[i][maxCol] = string.len(subMenuTable[i][menu])
+        subMenuTable[i][line] = (y - (i - 1))
+        subMenuTable[i][state] = false
+        newWidth = subMenuTable[i][maxCol]
+        if newWidth > subMenuWidth then
+            subMenuWidth = newWidth
+        end
+    end
+    for i = 1, newMax do
+        subMenuTable[i][maxCol] = (subMenuWidth + menuWidth)
+    end
+    data.close()
+    subMenu = true
+end
+
+--DRAW FUNCTIONS--
+
+function drawBackground()
+    draw.fakeScreen()
+end
+
+function drawScreen()
+    draw.fakeScreen()
+    term.setBackgroundColor(lightGrey)
+    if start then
+        for i = 1, maxEntries do
+            term.setCursorPos(mTable[i][minCol], mTable[i][line])
+            for j = 1, menuWidth do
+                term.write(" ")
+            end
+            term.setCursorPos(mTable[i][minCol], mTable[i][line])
+            term.write(mTable[i][menu])
+            if mTable[i][state] then
+                loadTable(mTable[i][menu])
+                for k = 1, newMax do
+                    term.setCursorPos(subMenuTable[k][minCol], subMenuTable[k][line])
+                    for l = 1, subMenuWidth do
+                        term.write(" ")
+                    end
+                    term.setCursorPos(subMenuTable[k][minCol], subMenuTable[k][line])
+                    term.write(subMenuTable[k][menu])
+                end
+            else
+                
+            end
+        end
+    else
+    draw.fakeScreen()
+    end
+    term.setCursorPos((maxX + 1), maxY)
+end
+
+--USER FUNCTIONS--
+
+function launch(prog)
+    if prog == "Shutdown" then
+        os.shutdown()
+    elseif prog == "Reboot" then
+        os.reboot()
+    elseif prog == "To_COS" then
+        quitToCOS = true
+    else
+        for i = 1, 2 do
+            shell.run("cd ..")
+        end
+        shell.run("cd OS")
+        shell.run("cd "..menuChoice)
+        closeMenus()
+        drawScreen()
+        if button == 1 then
+            term.setCursorPos(7, 19)
+            term.setBackgroundColor(black)
+            write(prog)
+            shell.run(prog)
+        else
+            shell.run("edit "..prog)
+        end
+        shell.run("cd ..")
+        shell.run("cd ..")
+    end
+end
+
+function closeMenus()
+    start = false
+    subMenu = false
+    for i = 1, maxEntries do
+        mTable[i][state] = false
+    end
+end
+
+function mouse()
+    event, button, x, y = os.pullEvent("mouse_click")
+    closeStart = true
+    if start then
+        for i = 1, maxEntries do
+            if x >= mTable[i][minCol] and x <= mTable[i][maxCol] then
+                if y == mTable[i][line] then
+                    mTable[i][state] = not mTable[i][state]
+                    if mTable[i][state] then
+                        loadTable(mTable[i][menu])
+                        menuChoice = mTable[i][menu]
+                    end
+                    closeStart = false
+                    break
+                else
+                    --closeMenus()
+                end
+            end
+        end
+        if subMenu then
+            for j = 1, newMax do
+                if x >= subMenuTable[j][minCol] and x <= subMenuTable[j][maxCol] then
+                    if y == subMenuTable[j][line] then
+                        program = subMenuTable[j][menu]
+                        launch(program)
+                        closeMenus()
+                        closeStart = false
+                        break
+                    else
+                        --closeMenus()
+                    end
+                end
+            end
+        else
+        end
+    end
+    if x >= startMin and x <= startMax then
+        if y == startY then
+            if start then 
+                closeMenus()
+            else
+                start = not start
+                for i = 1, maxEntries do
+                    if mTable[i][menu] == "Turn_Off" or mTable[i][menu] == "Commands" then
+                    else
+                        file.updateMenu(mTable[i][menu])
+                    end
+                end
+            end
+            closeStart = false
+        end
+    end
+    if closeStart then
+       -- if x >= (1) and x <= (menuWidth + subMenuWidth) then
+       closeMenus()
+    --end 
+    end 
+    drawScreen()
+end
+
+--DEBUG FUNCTIONS--
+
+function checkTable()
+    for i = 1, maxEntries do
+        print("Name: "..textutils.serialize(mTable[i][menu])) --.." : "..tostring(mTable[i][minCol]).." : "..tostring(mTable[i][maxCol]).." : "..tostring(mTable[i][line]).." : "..tostring(mTable[i][state]))
+--        print("Name: "..tostring(mTable[i][menu][menu1]))
+    end
+--    print("Longest entry: "..bigLength)
+end
+
+--PROGRAM--
+
+quitToCOS = false
+check()
+menuTable()
+--loadTables()
+--checkTable()
+--drawBoot(8, "Welcome to PedrOS. Ver.0.1.")
+--sleep(2)
+term.clear()
+drawScreen()
+repeat
+    mouse()
+    drawScreen()
+until quitToCOS
+term.setBackgroundColor(black)
+term.clear()
+term.setCursorPos(1, 19)
+term.setTextColor(white)
+print("CraftOS prompt:")
+print("Type exit to return.")

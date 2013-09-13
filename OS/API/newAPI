@@ -1,0 +1,13 @@
+os.loadAPI("OS/API/draw")
+
+shell.run("cd ..")
+shell.run("cd ..")
+
+draw.inputBox("Name API:")
+input = read()
+
+if input == nil then
+else
+    shell.run("edit OS/API/"..input)
+end
+

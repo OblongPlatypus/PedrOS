@@ -1,0 +1,22 @@
+os.loadAPI("OS/API/draw")
+os.loadAPI("OS/API/tableStuff")
+os.loadAPI("OS/API/file")
+
+click = draw.optionBox("Confirm delete:", "Are you sure you want to delete the folder?", "Ok", "Cancel")
+
+for i = 1, 2 do
+    shell.run("cd ..")
+end
+
+if click == "button1" then
+    tempTable = tableStuff.newNameTable("OS/temp/")
+    for i = 1, 100 do
+        if tempTable[i] == "emptyTemp" then
+        elseif tempTable[i] == nil then
+        else
+            shell.run("delete OS/temp/"..tempTable[i])
+        end
+    end
+else
+end
+file.updateMenu(temp)

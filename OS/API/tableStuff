@@ -1,0 +1,7 @@
+function newNameTable(folder)
+    newTable = nil
+    newTable = fs.list(folder)
+    return(newTable)
+end
+
+

@@ -1,0 +1,3 @@
+data = paintutils.loadImage("OS/Artwork/Background")
+paintutils.drawImage(data, 1, 1)
+sleep(10)

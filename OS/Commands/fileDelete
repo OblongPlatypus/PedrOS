@@ -1,0 +1,19 @@
+os.loadAPI("OS/API/file")
+os.loadAPI("OS/API/draw")
+
+shell.run("cd ..")
+shell.run("cd ..")
+
+draw.inputBox("Select File:")
+input = read()
+
+if input == nil then
+else
+    tgtFile = tostring(input)
+    click = draw.optionBox("Confirm Delete.", "Delete "..tgtFile, "OK", "Cancel")
+    if click == "button1" then
+        shell.run("delete "..tgtFile)
+    elseif click == "button2" then
+    end
+end
+file.updateMenu()

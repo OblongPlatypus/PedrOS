@@ -1,0 +1,24 @@
+os.loadAPI("OS/API/file")
+os.loadAPI("OS/API/draw")
+
+for i = 1, 2 do
+    shell.run("cd ..")
+end
+
+draw.inputBox("Name program")
+input = read()
+prog = tostring(input)
+shell.run("edit OS/temp/"..prog)
+click = draw.optionBox("Save", "Would you like to save?", "Yes", "No")
+if click == "button1" then
+    click = draw.optionBox("Choose type", "Computer program or turtle?", "Programs", "Turtles")
+    if click == "button1" then
+        fs.copy("OS/temp/"..prog, "OS/Programs/"..prog)
+        file.updateMenu("Programs")
+    elseif click == "button2" then
+        fs.copy("OS/temp/"..prog, "OS/Turtles/"..prog)
+        file.updateMenu("Turtles")
+    end
+else
+    fs.delete("OS/temp/"..prog)
+end

@@ -1,0 +1,5 @@
+os.loadAPI("build/apis/move")
+shell.run("travel 216 111 -2303")
+move.face(2)
+shell.run("tBuild cuboid 15 9 4 right true Nether Brick")
+shell.run("callHome")

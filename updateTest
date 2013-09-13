@@ -1,0 +1,5 @@
+fs.delete("OS/test")
+fs.copy("OS/OSMain", "OS/test")
+term.clear()
+term.setCursorPos(1, 1)
+print("Done.")

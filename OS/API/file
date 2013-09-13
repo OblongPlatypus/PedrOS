@@ -1,0 +1,125 @@
+function checkDir(path)
+    fileCount = 0
+    fileTable = fs.list(path)
+    for i = 1, 100 do
+        if fileTable[i] == nil then
+        else
+            fileCount = fileCount + 1
+        end
+    end
+end
+
+function updateMenu(menuName)
+    checkDir("OS/"..menuName)
+    fs.delete("OS/menus/"..menuName)
+    update = fs.open("OS/menus/"..menuName, "w")
+    update.writeLine(fileCount)
+    for i = 1, fileCount do
+        update.writeLine(tostring(fileTable[i]))
+    end
+    update.close()
+end
+
+function getMax()
+    data = fs.open("OS/menus/menuData")
+    maxEntries = data.readLine()
+    data.close()
+    return(maxEntries)
+end
+
+function getMaxLen(filePath)
+    maxLen = 0
+    data = fs.open(filePath)
+    maxEntries = getMax()
+    for i = 1, maxEntries do
+        x = string.len(data.readLine())
+  	    	if x > maxLen then
+		          maxLen = x
+    	   end
+    end
+   	return(maxLen)
+end
+
+--File writing with modifier to allow different function calls.
+function edit(filePath, message, modifier)
+    --no modifier will write a block of code to a file
+    if modifier == nil then
+        data = fs.open(filePath, "w")
+        data.write(message)
+        data.close()
+	   --"Line" modifier will write a line of code to a file
+	   elseif modifier == "line" or modifier == "l" or modifier == "Line" or modifier == "L" then
+	       data = fs.open(filePath, "w")
+        data.writeLine(message.."\n")
+        data.close()
+	   --"Pre" modifier adds a line of text to the beginning of a file
+   	elseif modifier == "pre" or modifier == "p" or modifier == "Pre" or modifier == "P" then
+  		    if fs.exists(filePath) then
+         			existingData = readFile(filePath)
+         			data = fs.open(filePath, "w")
+         			data.writeLine(message.."\n")
+       	  		data.write(existingData)
+       			  data.close()
+   	    else
+	      	    data = fs.open(filePath, "w")
+         			data.writeLine(message.."\n")
+      		   	data.write(existingData)
+         			data.close()
+      		end
+	   --"Add" modifier will write a line of text on the end of a file
+   	elseif modifier == "add" or modifier == "a" or modifier == "Add" or modifier == "A" then
+      		if fs.exists(filePath) then
+     	    		existingData = readFile(filePath)
+    	     		data = fs.open(filePath, "w")
+			         data.write(existingData)
+         			data.writeLine(message.."\n")
+         			data.close()
+       	else
+		          data = fs.open(filePath, "w")
+     	    		data.writeLine(message.."\n")
+         			data.close()
+      		end
+	   --"Merge" modifier will add a block of code to the end of a file
+   	elseif modifier == "merge" or modifier == "m" or modifier == "Merge" or modifier == "M" then
+	       if fs.exists(filePath) then
+         			existingData = readFile(filePath)
+         			data = fs.open(filePath, "w")
+         			data.write(existingData)
+         			data.write(message)
+         			data.close()
+     		else
+		          data = fs.open(filePath, "w")
+         			data.write(message)
+         			data.close()
+     		end
+   	end
+end
+
+--File reading with modifier to allow different function calls.
+function readFile(filePath, modifier)
+    --no modifier returns all of a file as a string
+    if modifier == nil then
+      		data = fs.open(filePath, "r")
+      		fileData = data.readAll()
+      		data.close()
+      		return(fileData)
+	   --"Line" modifier returns the first line of a file
+   	elseif modifier == "line" or modifier == "l" or modifier == "Line" or modifier == "L" then
+	       data = fs.open(filePath, "r")
+      		fileData = data.readLine()
+      		data.close()
+      		return(fileData)
+	   --"End" modifier returns the last line of a file
+   	elseif modifier == "end" or modifier == "e" or modifier == "End" or modifier == "E" then
+	       data = fs.open(filePath, "r")
+      		line = 0
+      		while true do
+         			if fileData == nil then
+         			    break
+         			end
+      		    line = data.readLine()
+      		end
+      		data.close()
+   	    return(fileData)
+   	end
+end

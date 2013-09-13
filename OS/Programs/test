@@ -1,0 +1,8 @@
+os.loadAPI("OS/API/draw")
+click = draw.optionBox("Result:", "Ink level: "..p.getInkLevel(), "OK", "Cancel")
+while true do
+    if click == "button1" then
+        break
+    else
+    end
+end

@@ -1,0 +1,3 @@
+fs.delete("OS/OSMain")
+fs.copy("OS/test", "OS/OSMain")
+print("Done")

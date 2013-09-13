@@ -1,0 +1,25 @@
+os.loadAPI("OS/API/file")
+os.loadAPI("OS/API/draw")
+
+shell.run("cd ..")
+shell.run("cd ..")
+
+draw.inputBox("Select file to copy:")
+input = read()
+target = tostring(input)
+
+draw.inputBox("Select destination:")
+input = read()
+dest = tostring(input)
+
+click = draw.optionBox("Select copy type:", "Backup file of transfer and Delete?", "Backup", "transfer")
+
+if click == "button1" then
+    shell.run("copy "..target.." "..dest)
+elseif click == "button2" then
+    shell.run("copy "..target.." "..dest)
+    shell.run("cd ..")
+    shell.run("cd ..")
+    shell.run("delete "..target)
+end
+

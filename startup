@@ -1,0 +1,53 @@
+--GLOBAL VARIABLES--
+
+osVer = "Alpha v0.1"
+x, y = term.getSize()
+startY = math.floor((y / 2) - 2)
+black = colors.black
+white = colors.white
+na = "na"
+
+--SCREEN FUNCTIONS--
+
+function metaScreen(xPos, yPos, bc, tc, cl)
+    if xPos ~= "na" then
+        term.setCursorPos(xPos, yPos)
+    end
+    if cl then
+        term.setBackgroundColor(black)
+        term.clear()
+    end
+    if bc ~= "na" then
+        term.setBackgroundColor(bc)
+    end
+    if tc ~= "na" then
+        term.setTextColor(tc)
+    end
+end
+
+function drawSplash()
+    metaScreen(1, startY, na, na, true)
+
+    print("            ___        _      ___  ___  (r)")
+    print("           | _ \\___ __| |_ _ / _ \\/ __|")
+    print("           |  _/ -_) _' | '_| (_) \\__ \\ ")
+    print("           |_| \\___\\__,_|_|  \\___/|___/")
+    print(" ")
+    print("                    "..osVer)
+end
+
+function loadBar(t)
+    metaScreen(2, y - 1, white, na, false)
+
+    for i = 1, x - 2 do
+        write(" ")
+        sleep(t / x)
+    end
+end
+
+--Program--
+
+drawSplash()
+loadBar(5)
+metaScreen(1, 1, black, na, true)
+shell.run("OS/OSMain")

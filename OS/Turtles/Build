@@ -1,0 +1,104 @@
+os.loadAPI("OS/API/draw")
+
+while true do
+    draw.inputBox("Turtle ID:")
+    input = read()
+    tId = tonumber(input)
+    draw.inputBox("Real X:")
+    input = read()
+    tgtX = tonumber(input)
+    draw.inputBox("Real Y:")
+    input = read()
+    tgtY = tonumber(input)
+    draw.inputBox("Real Z:")
+    input = read()
+    tgtZ = tonumber(input)
+    draw.inputBox("Build facing:")
+    input = read()
+    tgtH = tostring(input)
+    if tgtH == "north" or tgtH == "North" then
+        tgtH = 0
+    elseif tgtH == "east" or tgtH == "East" then
+        tgtH = 1
+    elseif tgtH == "south" or tgtH == "South" then
+        tgtH = 2
+    elseif tgtH == "west" or tgtH == "West" then
+        tgtH = 3
+    else
+        tgtH = 0
+    end
+    click = draw.optionBox("Confirm build site:", "X: "..tgtX.." Y: "..tgtY.." Z: "..tgtZ, "Ok", "Reset")
+    if click == "button1" then
+        break
+    else
+    end
+end
+
+while true do
+    draw.inputBox("Build shape:")
+    input = read()
+    shape = tostring(input)
+    if shape == "box" or shape == "Box" or shape == "floor" or shape == "Floor" or shape == "wall" or shape == "Wall" or shape == "ceiling" or shape == "Ceiling" or shape == "cube" or shape == "Cube" then
+        shape = "cuboid"
+    end
+    draw.inputBox("Length:")
+    input = read()
+    length = tonumber(input)
+    draw.inputBox("Width:")
+    input = read()
+    width = tonumber(input)
+    draw.inputBox("Height:")
+    input = read()
+    height = tonumber(input)
+    draw.inputBox("Build to left or right?")
+    input = read()
+    side = tostring(input)
+    if input == "left" or input == "Left" then
+        side = "left"
+    elseif input == "right" or input == "Right" then
+        side = "right"
+    else
+        side = "right"
+    end
+    draw.inputBox("Hollow?:")
+    input = read()
+    hBool = tostring(input)
+    if hBool == "yes" or hBool == "Yes" or hBool == "true" or hBool == "True" then
+        hBool = "true"
+    else
+        hBool = "false"
+    end
+    draw.inputBox("Build material:")
+    input = read()
+    material = tostring(input)
+    click = draw.optionBox("Confirm build order:", material.." "..length.." "..width.." "..height.." "..shape.."?", "Ok", "Retry")
+    if click == "button1" then
+        break
+    else
+    end
+end
+
+header = 'os.loadAPI("build/apis/move")'
+tProg = 'shell.run("travel '..tgtX.." "..tgtY.." "..tgtZ..'")'
+fProg = 'move.face('..tgtH..')'
+bProg = 'shell.run("tBuild '..shape.." "..length.." "..width.." "..height.." "..side.." "..hBool.." "..material..'")'
+hProg = 'shell.run("callHome")'
+
+data = fs.open("tData", "w")
+data.writeLine(header)
+data.writeLine(tProg)
+data.writeLine(fProg)
+data.writeLine(bProg)
+data.writeLine(hProg)
+data.close()
+
+rednet.open("top")
+rednet.send(tId, "batch")
+sleep(0.5)
+rednet.send(tId, "newBuild")
+sleep(0.5)
+data = fs.open("tData", "r")
+file = data.readAll()
+data.close()
+rednet.send(tId, file)
+

@@ -1,0 +1,15 @@
+os.loadAPI("OS/API/draw")
+os.loadAPI("OS/API/net")
+myId = os.computerID()
+m = peripheral.wrap("bottom")
+m.open(1)
+m.open(myId)
+--tArgs = {...}
+
+draw.inputBox("Net search:")
+input = read()
+table = net.send(input)
+draw.serialize(table, "DNS Results.", colors.lightGray, colors.magenta, colors.black)
+sleep(10)
+
+

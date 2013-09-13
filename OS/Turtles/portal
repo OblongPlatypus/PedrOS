@@ -1,0 +1,38 @@
+p = peripheral.wrap("left")
+channel = 33
+rednet.open("right")
+
+function listen()
+    print("Listening...")
+    msg = nil 
+	while msg == nil do
+	    id, msg = rednet.receive()
+	end
+	msg = tonumber(msg)
+end
+
+while true do
+    listen()
+    if p.suck(msg, 1) then
+        turtle.turnLeft()
+	    rs.setBundledOutput("bottom", 4)
+	    sleep(0.5)
+        rs.setBundledOutput("bottom", 0)
+        turtle.up()
+        turtle.drop()
+        turtle.down()
+        sleep(5)
+        rs.setBundledOutput("bottom", 1)
+        sleep(0.5)
+        rs.setBundledOutput("bottom", 0)
+		rs.setBundledOutput("bottom", 4)
+	    sleep(0.5)
+        rs.setBundledOutput("bottom", 0)
+        turtle.suck()
+        turtle.turnRight()
+        p.drop(msg, 1)
+	else
+	    msg = nil
+	end
+	print(msg or "failed")
+end

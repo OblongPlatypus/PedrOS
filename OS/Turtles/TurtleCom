@@ -1,0 +1,13 @@
+rednet.open(wifiSide)
+os.loadAPI("OS/API/draw")
+draw.inputBox("Select turtle ID:")
+input = read()
+id = tonumber(input)
+draw.inputBox("Select program:")
+input = read()
+program = tostring(input)
+click = draw.optionBox("Confirm.", "Send "..program.." to Turtle "..id.."?", "Ok", "Cancel")
+if click == "button1" then
+    rednet.send(id, program)
+else
+end
